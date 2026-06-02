@@ -1,0 +1,63 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-bg-top: #1b1535;
+  --color-bg-bottom: #0a0816;
+  --color-ink: #f3eee0;
+  --color-muted: #b6abce;
+  --color-gold: #d9b15e;
+  --color-gold-soft: rgba(217, 177, 94, 0.35);
+  --color-parchment: #f6f0e0;
+  --color-parchment-ink: #1a1626;
+
+  --font-sans: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+
+  --animate-card-enter: card-enter 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html,
+  #root {
+    min-height: 100%;
+  }
+
+  body {
+    min-height: 100svh;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    background:
+      radial-gradient(
+        120% 80% at 50% -10%,
+        rgba(217, 177, 94, 0.16),
+        transparent 60%
+      ),
+      radial-gradient(
+        90% 60% at 80% 110%,
+        rgba(120, 86, 196, 0.22),
+        transparent 60%
+      ),
+      linear-gradient(180deg, var(--color-bg-top), var(--color-bg-bottom));
+    background-attachment: fixed;
+  }
+}
