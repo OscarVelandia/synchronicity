@@ -4,7 +4,9 @@ import tailwindcss from '@tailwindcss/vite'
 import { fileURLToPath, URL } from 'node:url'
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ command }) => ({
+  // Served from the repo subpath on GitHub Pages (build); root during dev.
+  base: command === 'build' ? '/synchronicity/' : '/',
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
@@ -15,4 +17,4 @@ export default defineConfig({
       '@styles': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
-})
+}))

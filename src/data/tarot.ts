@@ -76,7 +76,7 @@ const majorCards: readonly TarotCard[] = majorDefinitions.map(
     id: `tarot-${definition.fileSlug}`,
     name: definition.name,
     arcana: 'major',
-    imageUrl: `/cards/tarot/${definition.fileSlug}.jpg`,
+    imageUrl: `${import.meta.env.BASE_URL}cards/tarot/${definition.fileSlug}.jpg`,
     uprightMeaning: definition.uprightMeaning,
   }),
 )
@@ -89,7 +89,7 @@ const minorCards: readonly TarotCard[] = suitDefinitions.flatMap((suit) =>
       name: `${rank.label} of ${suit.label}`,
       arcana: 'minor',
       suit: suit.id,
-      imageUrl: `/cards/tarot/${suit.id}-${rank.fileIndex}.jpg`,
+      imageUrl: `${import.meta.env.BASE_URL}cards/tarot/${suit.id}-${rank.fileIndex}.jpg`,
       uprightMeaning: `${rank.meaningPrefix} ${suit.theme}.`,
     }),
   ),
