@@ -27,7 +27,7 @@ export default function App() {
   }
 
   return (
-    <main className="mx-auto flex min-h-[100svh] max-w-[880px] flex-col items-center gap-7 px-6 pt-12 pb-8 text-center">
+    <main className="mx-auto flex h-svh max-w-220 flex-col items-center gap-7 overflow-hidden px-6 pt-12 pb-8 text-center">
       <header className="flex flex-col gap-2.5">
         <h1 className="font-serif text-[clamp(2.4rem,6vw,3.4rem)] font-semibold tracking-[0.5px] text-gold [text-shadow:0_2px_24px_var(--color-gold-soft)]">
           {texts.title}
@@ -48,7 +48,7 @@ export default function App() {
         />
       </div>
 
-      <section className="flex min-h-[460px] w-full grow items-center justify-center">
+      <section className="flex min-h-0 w-full grow items-center justify-center">
         {drawn === null ? (
           <p className="text-[1.05rem] text-muted italic">{texts.placeholder}</p>
         ) : (
@@ -56,7 +56,7 @@ export default function App() {
         )}
       </section>
 
-      <footer className="max-w-[50ch] text-[0.76rem] leading-[1.5] text-muted/65">
+      <footer className="max-w-[50ch] text-[0.76rem] leading-normal text-muted/65">
         {texts.footer}
       </footer>
     </main>
@@ -83,7 +83,7 @@ function DeckButton({
     <button
       type="button"
       onClick={onClick}
-      className={`cursor-pointer rounded-full border border-gold-soft px-[26px] py-3.5 text-base font-semibold tracking-[0.3px] text-ink transition hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_10px_28px_rgba(0,0,0,0.35)] active:translate-y-0 focus-visible:[outline:2px_solid_var(--color-gold)] focus-visible:outline-offset-[3px] ${deckButtonVariants[variant]}`}
+      className={`cursor-pointer rounded-full border border-gold-soft px-6.5 py-3.5 text-base font-semibold tracking-[0.3px] text-ink transition hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_10px_28px_rgba(0,0,0,0.35)] active:translate-y-0 focus-visible:[outline:2px_solid_var(--color-gold)] focus-visible:outline-offset-[3px] ${deckButtonVariants[variant]}`}
     >
       {label}
     </button>

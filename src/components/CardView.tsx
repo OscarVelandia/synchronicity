@@ -1,4 +1,5 @@
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import type { DrawnCard, ObliqueStrategyCard, TarotCard } from '@domain/cards'
 
 const texts = {
@@ -9,6 +10,8 @@ const texts = {
   minorArcanaWithSuitPrefix: 'Minor Arcana · ',
   obliqueEyebrow: 'Oblique Strategies',
   obliqueCredit: 'Brian Eno · Peter Schmidt',
+  enlargePrefix: 'Enlarge ',
+  closeImage: 'Close image',
 } as const
 
 export function CardView({ card }: { readonly card: DrawnCard }) {
@@ -21,34 +24,48 @@ export function CardView({ card }: { readonly card: DrawnCard }) {
 
 function TarotCardView({ card }: { readonly card: TarotCard }) {
   const [isDescriptionVisible, setIsDescriptionVisible] = useState(false)
+  const [isImageOpen, setIsImageOpen] = useState(false)
 
   return (
-    <article className="flex w-[min(320px,86vw)] animate-card-enter flex-col gap-4 rounded-[18px] border border-gold-soft bg-white/[0.05] p-4 shadow-[0_24px_60px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.04)]">
-      <div className="aspect-[600/1024] overflow-hidden rounded-xl border border-[rgba(217,177,94,0.45)] bg-[#0c0a18]">
+    <article className="flex max-h-full min-h-0 w-[min(320px,86vw)] animate-card-enter flex-col gap-4 rounded-[18px] border border-gold-soft bg-white/5 p-4 shadow-[0_24px_60px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.04)]">
+      <button
+        type="button"
+        onClick={() => setIsImageOpen(true)}
+        aria-label={`${texts.enlargePrefix}${card.name}`}
+        className="group block aspect-600/1024 min-h-0 w-full flex-auto cursor-zoom-in overflow-hidden rounded-xl border border-[rgba(217,177,94,0.45)] bg-[#0c0a18] focus-visible:[outline:2px_solid_var(--color-gold)] focus-visible:outline-offset-2"
+      >
         <img
-          className="block h-full w-full object-cover"
+          className="block h-full w-full object-contain transition duration-300 group-hover:scale-[1.03]"
           src={card.imageUrl}
           alt={card.name}
         />
-      </div>
+      </button>
 
-      <div className="flex flex-col gap-2">
+      <div className="flex shrink-0 flex-col gap-2">
         <CardEyebrow>{formatTarotLabel(card)}</CardEyebrow>
         <h2 className="font-serif text-2xl font-semibold text-ink">{card.name}</h2>
         <button
           type="button"
-          className="w-fit cursor-pointer self-center rounded-full border border-gold-soft bg-white/[0.08] px-3 py-[7px] text-[0.86rem] font-semibold tracking-[0.2px] text-ink transition hover:-translate-y-px hover:border-gold hover:bg-white/[0.14] active:translate-y-0 focus-visible:[outline:2px_solid_var(--color-gold)] focus-visible:outline-offset-2"
+          className="w-fit cursor-pointer self-center rounded-full border border-gold-soft bg-white/8 px-3 py-1.75 text-[0.86rem] font-semibold tracking-[0.2px] text-ink transition hover:-translate-y-px hover:border-gold hover:bg-white/[0.14] active:translate-y-0 focus-visible:[outline:2px_solid_var(--color-gold)] focus-visible:outline-offset-2"
           onClick={() => setIsDescriptionVisible((isVisible) => !isVisible)}
           aria-expanded={isDescriptionVisible}
         >
           {isDescriptionVisible ? texts.hideDescription : texts.showDescription}
         </button>
         {isDescriptionVisible ? (
-          <p className="text-[0.95rem] leading-[1.5] text-muted">
+          <p className="text-[0.95rem] leading-normal text-muted">
             {card.uprightMeaning}
           </p>
         ) : null}
       </div>
+
+      {isImageOpen ? (
+        <CardImageModal
+          imageUrl={card.imageUrl}
+          name={card.name}
+          onClose={() => setIsImageOpen(false)}
+        />
+      ) : null}
     </article>
   )
 }
@@ -86,9 +103,62 @@ function CardEyebrow({
   )
 }
 
+function CardImageModal({
+  imageUrl,
+  name,
+  onClose,
+}: {
+  readonly imageUrl: string
+  readonly name: string
+  readonly onClose: () => void
+}) {
+  useEffect(function lockScrollAndCloseOnEscape() {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose()
+      }
+    }
+
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [onClose])
+
+  return createPortal(
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${texts.enlargePrefix}${name}`}
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-6 backdrop-blur-sm"
+    >
+      <img
+        src={imageUrl}
+        alt={name}
+        onClick={(event) => event.stopPropagation()}
+        className="max-h-[85svh] w-auto max-w-full animate-card-enter rounded-2xl border border-gold-soft shadow-[0_30px_90px_rgba(0,0,0,0.65)]"
+      />
+      <button
+        type="button"
+        onClick={onClose}
+        aria-label={texts.closeImage}
+        className="absolute top-4 right-4 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-gold-soft bg-white/10 text-2xl leading-none text-ink transition hover:border-gold hover:bg-white/20 focus-visible:[outline:2px_solid_var(--color-gold)] focus-visible:outline-offset-2"
+      >
+        ×
+      </button>
+    </div>,
+    document.body,
+  )
+}
+
 function ObliqueCardView({ card }: { readonly card: ObliqueStrategyCard }) {
   return (
-    <article className="flex aspect-[5/7] w-[min(360px,88vw)] animate-card-enter flex-col items-center justify-between rounded-[14px] bg-[linear-gradient(160deg,#fbf7ec,var(--color-parchment))] px-[26px] py-7 text-parchment-ink shadow-[0_24px_60px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(0,0,0,0.06)]">
+    <article className="flex aspect-5/7 max-h-full w-[min(360px,88vw)] animate-card-enter flex-col items-center justify-between rounded-[14px] bg-[linear-gradient(160deg,#fbf7ec,var(--color-parchment))] px-6.5 py-7 text-parchment-ink shadow-[0_24px_60px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(0,0,0,0.06)]">
       <CardEyebrow className="text-[#9a7a32]">{texts.obliqueEyebrow}</CardEyebrow>
       <p className="flex grow items-center font-serif text-[clamp(1.3rem,4.5vw,1.7rem)] leading-[1.4] text-parchment-ink">
         {card.text}
