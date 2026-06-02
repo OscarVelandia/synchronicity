@@ -1,5 +1,7 @@
 # Synchronicity
 
+**Live:** https://oscarvelandia.github.io/synchronicity/
+
 A tiny web app that draws a random card from one of two decks:
 
 - **Oblique Strategies** — Brian Eno & Peter Schmidt's creative-block prompts.
@@ -7,6 +9,11 @@ A tiny web app that draws a random card from one of two decks:
 
 Two buttons, one card at a time. Each draw avoids immediately repeating the
 previous card.
+
+## Why "Synchronicity"?
+
+The name comes from Carl Jung's term for *meaningful coincidence* — when a random event feels significant because of how it lines up with your situation.
+That's exactly how both decks work: the draw is random, but the meaning comes from connecting whatever you pull to the moment you're in. A little synchronicity engine.
 
 ## Tech
 

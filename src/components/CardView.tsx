@@ -53,7 +53,7 @@ function TarotCardView({ card }: { readonly card: TarotCard }) {
           {isDescriptionVisible ? texts.hideDescription : texts.showDescription}
         </button>
         {isDescriptionVisible ? (
-          <p className="text-[0.95rem] leading-normal text-muted">
+          <p className="text-[0.82rem] leading-normal text-muted">
             {card.uprightMeaning}
           </p>
         ) : null}
@@ -147,9 +147,19 @@ function CardImageModal({
         type="button"
         onClick={onClose}
         aria-label={texts.closeImage}
-        className="absolute top-4 right-4 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-gold-soft bg-white/10 text-2xl leading-none text-ink transition hover:border-gold hover:bg-white/20 focus-visible:[outline:2px_solid_var(--color-gold)] focus-visible:outline-offset-2"
+        className="absolute top-4 right-4 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-gold-soft bg-white/10 text-ink transition hover:border-gold hover:bg-white/20 focus-visible:[outline:2px_solid_var(--color-gold)] focus-visible:outline-offset-2"
       >
-        ×
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+          strokeLinecap="round"
+          aria-hidden="true"
+          className="h-4.5 w-4.5"
+        >
+          <path d="M6 6 L18 18 M18 6 L6 18" />
+        </svg>
       </button>
     </div>,
     document.body,

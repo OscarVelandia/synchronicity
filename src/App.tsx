@@ -27,15 +27,17 @@ export default function App() {
   }
 
   return (
-    <main className="mx-auto flex h-svh max-w-220 flex-col items-center gap-7 overflow-hidden px-6 pt-12 pb-8 text-center">
-      <header className="flex flex-col gap-2.5">
-        <h1 className="font-serif text-[clamp(2.4rem,6vw,3.4rem)] font-semibold tracking-[0.5px] text-gold [text-shadow:0_2px_24px_var(--color-gold-soft)]">
+    <main className="mx-auto flex h-svh max-w-220 flex-col items-center gap-4 overflow-hidden px-6 pt-5 pb-6 text-center sm:gap-7 sm:pt-12 sm:pb-8">
+      <header className="flex flex-col gap-2 sm:gap-2.5">
+        <h1 className="font-serif text-[clamp(1.85rem,7vw,3.4rem)] font-semibold tracking-[0.5px] text-gold [text-shadow:0_2px_24px_var(--color-gold-soft)]">
           {texts.title}
         </h1>
-        <p className="max-w-[38ch] text-[1.02rem] text-muted">{texts.subtitle}</p>
+        <p className="max-w-[38ch] text-[clamp(0.88rem,3.6vw,1.02rem)] text-muted">
+          {texts.subtitle}
+        </p>
       </header>
 
-      <div className="flex flex-wrap justify-center gap-4">
+      <div className="flex flex-nowrap justify-center gap-3 sm:gap-4">
         <DeckButton
           label={texts.drawOblique}
           variant="oblique"
@@ -48,7 +50,7 @@ export default function App() {
         />
       </div>
 
-      <section className="flex min-h-0 w-full grow items-center justify-center">
+      <section className="flex min-h-0 w-full grow items-start justify-center pt-2">
         {drawn === null ? (
           <p className="text-[1.05rem] text-muted italic">{texts.placeholder}</p>
         ) : (
@@ -83,7 +85,7 @@ function DeckButton({
     <button
       type="button"
       onClick={onClick}
-      className={`cursor-pointer rounded-full border border-gold-soft px-6.5 py-3.5 text-base font-semibold tracking-[0.3px] text-ink transition hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_10px_28px_rgba(0,0,0,0.35)] active:translate-y-0 focus-visible:[outline:2px_solid_var(--color-gold)] focus-visible:outline-offset-[3px] ${deckButtonVariants[variant]}`}
+      className={`cursor-pointer rounded-full border border-gold-soft px-4 py-3 text-sm font-semibold tracking-[0.3px] whitespace-nowrap text-ink transition hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_10px_28px_rgba(0,0,0,0.35)] active:translate-y-0 focus-visible:[outline:2px_solid_var(--color-gold)] focus-visible:outline-offset-[3px] sm:px-6.5 sm:py-3.5 sm:text-base ${deckButtonVariants[variant]}`}
     >
       {label}
     </button>
