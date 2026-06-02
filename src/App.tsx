@@ -1,67 +1,118 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { CardView } from '@components/CardView'
-import { obliqueStrategies } from '@data/obliqueStrategies'
-import { tarotDeck } from '@data/tarot'
-import type { DrawnCard } from '@domain/cards'
+import { buildObliqueStrategies } from '@data/obliqueStrategies'
+import { buildTarotDeck } from '@data/tarot'
+import type { DeckKind } from '@domain/cards'
 import { drawCard } from '@domain/draw'
+import { useLanguage } from '@i18n/useLanguage'
+import { languageLabels, languages } from '@i18n/language'
+import { uiText } from '@i18n/uiText'
 
-const texts = {
-  title: 'Synchronicity',
-  subtitle: 'Draw a prompt from the Oblique Strategies, or a card from the Tarot.',
-  drawOblique: 'Oblique Strategy',
-  drawTarot: 'Tarot Card',
-  placeholder: 'Choose a deck to draw your card.',
-  footer:
-    'Tarot imagery: Rider–Waite–Smith deck (public domain). Oblique Strategies by Brian Eno & Peter Schmidt.',
-} as const
+// A drawn card is stored by reference (deck + id) rather than by value, so
+// switching language re-renders the same card in the new language.
+type DrawnReference = { readonly kind: DeckKind; readonly id: string }
 
 export default function App() {
-  const [drawn, setDrawn] = useState<DrawnCard | null>(null)
+  const { language } = useLanguage()
+  const text = uiText[language]
+
+  const obliqueDeck = useMemo(() => buildObliqueStrategies(language), [language])
+  const tarotDeck = useMemo(() => buildTarotDeck(language), [language])
+
+  const [drawn, setDrawn] = useState<DrawnReference | null>(null)
 
   const handleDrawOblique = () => {
-    setDrawn((previous) => drawCard(obliqueStrategies, previous?.id ?? null))
+    setDrawn((previous) => {
+      const card = drawCard(obliqueDeck, previous?.id ?? null)
+
+      return { kind: card.kind, id: card.id }
+    })
   }
 
   const handleDrawTarot = () => {
-    setDrawn((previous) => drawCard(tarotDeck, previous?.id ?? null))
+    setDrawn((previous) => {
+      const card = drawCard(tarotDeck, previous?.id ?? null)
+
+      return { kind: card.kind, id: card.id }
+    })
   }
+
+  const drawnCard = useMemo(() => {
+    if (drawn === null) {
+      return null
+    }
+
+    const deck = drawn.kind === 'tarot' ? tarotDeck : obliqueDeck
+
+    return deck.find((card) => card.id === drawn.id) ?? null
+  }, [drawn, tarotDeck, obliqueDeck])
 
   return (
     <main className="mx-auto flex h-svh max-w-220 flex-col items-center gap-4 overflow-hidden px-6 pt-5 pb-6 text-center sm:gap-7 sm:pt-12 sm:pb-8">
+      <LanguageToggle />
+
       <header className="flex flex-col gap-2 sm:gap-2.5">
         <h1 className="font-serif text-[clamp(1.85rem,7vw,3.4rem)] font-semibold tracking-[0.5px] text-gold [text-shadow:0_2px_24px_var(--color-gold-soft)]">
-          {texts.title}
+          {text.title}
         </h1>
         <p className="max-w-[38ch] text-[clamp(0.88rem,3.6vw,1.02rem)] text-muted">
-          {texts.subtitle}
+          {text.subtitle}
         </p>
       </header>
 
       <div className="flex flex-nowrap justify-center gap-3 sm:gap-4">
         <DeckButton
-          label={texts.drawOblique}
+          label={text.drawOblique}
           variant="oblique"
           onClick={handleDrawOblique}
         />
         <DeckButton
-          label={texts.drawTarot}
+          label={text.drawTarot}
           variant="tarot"
           onClick={handleDrawTarot}
         />
       </div>
 
       <section className="flex min-h-0 w-full grow items-start justify-center pt-2">
-        {drawn === null ? (
-          <p className="text-[1.05rem] text-muted italic">{texts.placeholder}</p>
+        {drawnCard === null ? (
+          <p className="text-[1.05rem] text-muted italic">{text.placeholder}</p>
         ) : (
-          <CardView key={`${drawn.kind}-${drawn.id}`} card={drawn} />
+          <CardView key={`${drawnCard.kind}-${drawnCard.id}`} card={drawnCard} />
         )}
       </section>
 
       <footer className="max-w-[50ch] text-[0.76rem] leading-normal text-muted/65">
-        {texts.footer}
+        {text.footer}
       </footer>
     </main>
+  )
+}
+
+function LanguageToggle() {
+  const { language, setLanguage } = useLanguage()
+
+  return (
+    <div
+      role="group"
+      aria-label={uiText[language].languageSwitchLabel}
+      className="flex gap-0.5 self-end rounded-full border border-gold-soft bg-white/5 p-0.5 sm:gap-1 sm:p-1"
+    >
+      {languages.map((option) => (
+        <button
+          key={option}
+          type="button"
+          onClick={() => setLanguage(option)}
+          aria-pressed={option === language}
+          className={`cursor-pointer rounded-full px-2 py-0.5 text-[0.68rem] font-semibold tracking-[0.5px] transition focus-visible:[outline:2px_solid_var(--color-gold)] focus-visible:outline-offset-2 sm:px-3 sm:py-1 sm:text-xs ${
+            option === language
+              ? 'bg-gold/90 text-bg-bottom'
+              : 'text-muted hover:text-ink'
+          }`}
+        >
+          {languageLabels[option]}
+        </button>
+      ))}
+    </div>
   )
 }
 

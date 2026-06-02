@@ -10,6 +10,11 @@ A tiny web app that draws a random card from one of two decks:
 Two buttons, one card at a time. Each draw avoids immediately repeating the
 previous card.
 
+Available in **English and Spanish** — switch with the toggle in the corner.
+Everything localizes, including Tarot names/meanings and the Oblique Strategy
+prompts. Your choice is remembered, and the current card re-renders in the new
+language without redrawing.
+
 ## Why "Synchronicity"?
 
 The name comes from Carl Jung's term for *meaningful coincidence* — when a random event feels significant because of how it lines up with your situation.
@@ -34,9 +39,10 @@ npm run clean    # remove node_modules + lockfile, then reinstall
 ```
 public/cards/tarot/   # 78 Rider–Waite–Smith images (sourced from Wikimedia Commons)
 src/domain/           # card types + draw logic
-src/data/             # the two decks (oblique strategies, tarot)
+src/data/             # the two decks (oblique strategies, tarot), localized
+src/i18n/             # language context, UI string packs (en/es)
 src/components/        # card rendering
-src/App.tsx           # buttons + stage
+src/App.tsx           # buttons + stage + language toggle
 ```
 
 ## Credits & licensing

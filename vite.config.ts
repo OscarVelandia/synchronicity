@@ -14,6 +14,7 @@ export default defineConfig(({ command }) => ({
       '@components': fileURLToPath(new URL('./src/components', import.meta.url)),
       '@data': fileURLToPath(new URL('./src/data', import.meta.url)),
       '@domain': fileURLToPath(new URL('./src/domain', import.meta.url)),
+      '@i18n': fileURLToPath(new URL('./src/i18n', import.meta.url)),
       '@styles': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },

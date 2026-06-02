@@ -7,6 +7,7 @@
       "@components/*": ["src/components/*"],
       "@data/*": ["src/data/*"],
       "@domain/*": ["src/domain/*"],
+      "@i18n/*": ["src/i18n/*"],
       "@styles/*": ["src/*"]
     },
     "target": "es2023",

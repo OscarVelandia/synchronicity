@@ -1,18 +1,10 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
+import { tarotSuitLabels } from '@data/tarot'
 import type { DrawnCard, ObliqueStrategyCard, TarotCard } from '@domain/cards'
-
-const texts = {
-  hideDescription: 'Hide description',
-  showDescription: 'Show description',
-  majorArcana: 'Major Arcana',
-  minorArcana: 'Minor Arcana',
-  minorArcanaWithSuitPrefix: 'Minor Arcana · ',
-  obliqueEyebrow: 'Oblique Strategies',
-  obliqueCredit: 'Brian Eno · Peter Schmidt',
-  enlargePrefix: 'Enlarge ',
-  closeImage: 'Close image',
-} as const
+import { useLanguage } from '@i18n/useLanguage'
+import type { Language } from '@i18n/language'
+import { uiText } from '@i18n/uiText'
 
 export function CardView({ card }: { readonly card: DrawnCard }) {
   return card.kind === 'tarot' ? (
@@ -23,6 +15,8 @@ export function CardView({ card }: { readonly card: DrawnCard }) {
 }
 
 function TarotCardView({ card }: { readonly card: TarotCard }) {
+  const { language } = useLanguage()
+  const text = uiText[language]
   const [isDescriptionVisible, setIsDescriptionVisible] = useState(false)
   const [isImageOpen, setIsImageOpen] = useState(false)
 
@@ -31,7 +25,7 @@ function TarotCardView({ card }: { readonly card: TarotCard }) {
       <button
         type="button"
         onClick={() => setIsImageOpen(true)}
-        aria-label={`${texts.enlargePrefix}${card.name}`}
+        aria-label={`${text.enlargePrefix}${card.name}`}
         className="group block aspect-600/1024 min-h-0 w-full flex-auto cursor-zoom-in overflow-hidden rounded-xl border border-[rgba(217,177,94,0.45)] bg-[#0c0a18] focus-visible:[outline:2px_solid_var(--color-gold)] focus-visible:outline-offset-2"
       >
         <img
@@ -42,7 +36,7 @@ function TarotCardView({ card }: { readonly card: TarotCard }) {
       </button>
 
       <div className="flex shrink-0 flex-col gap-2">
-        <CardEyebrow>{formatTarotLabel(card)}</CardEyebrow>
+        <CardEyebrow>{formatTarotLabel(card, text, language)}</CardEyebrow>
         <h2 className="font-serif text-2xl font-semibold text-ink">{card.name}</h2>
         <button
           type="button"
@@ -50,7 +44,7 @@ function TarotCardView({ card }: { readonly card: TarotCard }) {
           onClick={() => setIsDescriptionVisible((isVisible) => !isVisible)}
           aria-expanded={isDescriptionVisible}
         >
-          {isDescriptionVisible ? texts.hideDescription : texts.showDescription}
+          {isDescriptionVisible ? text.hideDescription : text.showDescription}
         </button>
         {isDescriptionVisible ? (
           <p className="text-[0.82rem] leading-normal text-muted">
@@ -70,19 +64,21 @@ function TarotCardView({ card }: { readonly card: TarotCard }) {
   )
 }
 
-function formatTarotLabel(card: TarotCard): string {
+function formatTarotLabel(
+  card: TarotCard,
+  text: (typeof uiText)[Language],
+  language: Language,
+): string {
   switch (card.arcana) {
     case 'major':
-      return texts.majorArcana
+      return text.majorArcana
     case 'minor': {
       const suitLabel =
-        card.suit === undefined
-          ? null
-          : `${card.suit.charAt(0).toUpperCase()}${card.suit.slice(1)}`
+        card.suit === undefined ? null : tarotSuitLabels[card.suit][language]
 
       return suitLabel === null
-        ? texts.minorArcana
-        : `${texts.minorArcanaWithSuitPrefix}${suitLabel}`
+        ? text.minorArcana
+        : `${text.minorArcanaWithSuitPrefix}${suitLabel}`
     }
   }
 }
@@ -112,6 +108,9 @@ function CardImageModal({
   readonly name: string
   readonly onClose: () => void
 }) {
+  const { language } = useLanguage()
+  const text = uiText[language]
+
   useEffect(function lockScrollAndCloseOnEscape() {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -133,7 +132,7 @@ function CardImageModal({
     <div
       role="dialog"
       aria-modal="true"
-      aria-label={`${texts.enlargePrefix}${name}`}
+      aria-label={`${text.enlargePrefix}${name}`}
       onClick={onClose}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-6 backdrop-blur-sm"
     >
@@ -146,7 +145,7 @@ function CardImageModal({
       <button
         type="button"
         onClick={onClose}
-        aria-label={texts.closeImage}
+        aria-label={text.closeImage}
         className="absolute top-4 right-4 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-gold-soft bg-white/10 text-ink transition hover:border-gold hover:bg-white/20 focus-visible:[outline:2px_solid_var(--color-gold)] focus-visible:outline-offset-2"
       >
         <svg
@@ -167,14 +166,17 @@ function CardImageModal({
 }
 
 function ObliqueCardView({ card }: { readonly card: ObliqueStrategyCard }) {
+  const { language } = useLanguage()
+  const text = uiText[language]
+
   return (
     <article className="flex aspect-5/7 max-h-full w-[min(360px,88vw)] animate-card-enter flex-col items-center justify-between rounded-[14px] bg-[linear-gradient(160deg,#fbf7ec,var(--color-parchment))] px-6.5 py-7 text-parchment-ink shadow-[0_24px_60px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(0,0,0,0.06)]">
-      <CardEyebrow className="text-[#9a7a32]">{texts.obliqueEyebrow}</CardEyebrow>
+      <CardEyebrow className="text-[#9a7a32]">{text.obliqueEyebrow}</CardEyebrow>
       <p className="flex grow items-center font-serif text-[clamp(1.3rem,4.5vw,1.7rem)] leading-[1.4] text-parchment-ink">
         {card.text}
       </p>
       <p className="text-[0.74rem] uppercase tracking-[1px] text-parchment-ink/55">
-        {texts.obliqueCredit}
+        {text.obliqueCredit}
       </p>
     </article>
   )
