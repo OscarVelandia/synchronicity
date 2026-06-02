@@ -26,6 +26,7 @@ npm run dev      # start the dev server
 npm run build    # typecheck + production build
 npm run preview  # serve the production build
 npm run lint     # run ESLint
+npm run clean    # remove node_modules + lockfile, then reinstall
 ```
 
 ## Project layout
