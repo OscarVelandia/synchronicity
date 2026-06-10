@@ -48,7 +48,7 @@ export default function App() {
   }, [drawn, tarotDeck, obliqueDeck])
 
   return (
-    <main className="mx-auto flex h-svh max-w-220 flex-col items-center gap-4 overflow-hidden px-6 pt-5 pb-6 text-center sm:gap-7 sm:pt-12 sm:pb-8">
+    <main className="relative mx-auto flex h-svh max-w-220 flex-col items-center gap-4 overflow-hidden px-6 pt-10 pb-6 text-center sm:gap-7 sm:pt-12 sm:pb-8">
       <LanguageToggle />
 
       <header className="flex flex-col gap-2 sm:gap-2.5">
@@ -95,7 +95,7 @@ function LanguageToggle() {
     <div
       role="group"
       aria-label={uiText[language].languageSwitchLabel}
-      className="flex gap-0.5 self-end rounded-full border border-gold-soft bg-white/5 p-0.5 sm:gap-1 sm:p-1"
+      className="absolute top-3 right-5 z-10 flex gap-0.5 rounded-full border border-gold-soft bg-white/5 p-0.5 backdrop-blur-sm sm:top-6 sm:right-7 sm:gap-1 sm:p-1"
     >
       {languages.map((option) => (
         <button
