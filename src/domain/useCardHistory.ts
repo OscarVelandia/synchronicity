@@ -3,10 +3,12 @@
 // exposes a flat view-model so the UI never touches state or transitions.
 
 import { useMemo, useReducer } from 'react'
-import type { DrawnCard } from '@domain/cards'
+import type { DeckKind, DrawnCard } from '@domain/cards'
 import {
+  activeDeck,
   cardHistoryReducer,
   currentReference,
+  deckCursorId,
   emptyCardHistory,
   isAtNewest,
 } from '@domain/cardHistory'
@@ -14,7 +16,8 @@ import { drawCard } from '@domain/draw'
 
 export type CardHistoryView = {
   readonly card: DrawnCard | null
-  // 1-based position of the current card and the history length, for display.
+  // 1-based position of the current card within the active deck's history, and
+  // that deck's length, for display.
   readonly position: number
   readonly total: number
   readonly canShowPrevious: boolean
@@ -30,39 +33,47 @@ export function useCardHistory(
 ): CardHistoryView {
   const [state, dispatch] = useReducer(cardHistoryReducer, emptyCardHistory)
 
-  const currentRef = currentReference(state)
+  const draw = (kind: DeckKind) => {
+    const deck = kind === 'tarot' ? tarotDeck : obliqueDeck
+    const card = drawCard(deck, deckCursorId(state, kind))
 
-  const draw = (deck: readonly DrawnCard[]) => {
-    const card = drawCard(deck, currentRef?.id ?? null)
-
-    dispatch({ type: 'draw', payload: { kind: card.kind, id: card.id } })
+    dispatch({ type: 'draw', payload: { kind, id: card.id } })
   }
 
   // Resolve the stored reference against the (language-specific) decks, so a
   // language switch re-renders the same card in the new language.
+  const current = currentReference(state)
+  const currentKind = current?.kind ?? null
+  const currentId = current?.id ?? null
+
   const card = useMemo(() => {
-    if (currentRef === null) {
+    if (currentKind === null || currentId === null) {
       return null
     }
 
-    const deck = currentRef.kind === 'tarot' ? tarotDeck : obliqueDeck
+    const deck = currentKind === 'tarot' ? tarotDeck : obliqueDeck
 
-    return deck.find((item) => item.id === currentRef.id) ?? null
-  }, [currentRef, obliqueDeck, tarotDeck])
+    return deck.find((item) => item.id === currentId) ?? null
+  }, [currentKind, currentId, obliqueDeck, tarotDeck])
+
+  const deck = activeDeck(state)
 
   return {
     card,
-    position: state.cursor + 1,
-    total: state.entries.length,
-    canShowPrevious: state.cursor > 0,
-    drawOblique: () => draw(obliqueDeck),
-    drawTarot: () => draw(tarotDeck),
+    position: deck === null ? 0 : deck.cursor + 1,
+    total: deck === null ? 0 : deck.ids.length,
+    canShowPrevious: deck !== null && deck.cursor > 0,
+    drawOblique: () => draw('oblique'),
+    drawTarot: () => draw('tarot'),
     showPrevious: () => dispatch({ type: 'previous' }),
     showNext: () => {
-      // Walk forward through drawn cards first; at the newest card, draw another
-      // from the same deck so "next" doubles as the draw button.
+      // Walk forward through the active deck's drawn cards first; at its newest
+      // card, draw another from that same deck so "next" doubles as the draw
+      // button.
       if (isAtNewest(state)) {
-        draw(currentRef?.kind === 'tarot' ? tarotDeck : obliqueDeck)
+        if (state.active !== null) {
+          draw(state.active)
+        }
       } else {
         dispatch({ type: 'next' })
       }

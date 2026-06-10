@@ -28,7 +28,7 @@ export const uiText: Record<Language, UiText> = {
   en: {
     title: 'Synchronicity',
     subtitle:
-      'Draw a prompt from the Oblique Strategies, or a card from the Tarot.',
+      'Stuck? Spark a new idea with a cue from the Oblique Strategies, or a card from the Tarot.',
     drawOblique: 'Oblique Strategy',
     drawTarot: 'Tarot Card',
     placeholder: 'Choose a deck to draw your card.',
@@ -50,7 +50,7 @@ export const uiText: Record<Language, UiText> = {
   es: {
     title: 'Synchronicity',
     subtitle:
-      'Saca una indicación de las Estrategias Oblicuas, o una carta del Tarot.',
+      '¿Sin inspiración? Encuentra una idea nueva con una pista de las Estrategias Oblicuas, o una carta del Tarot.',
     drawOblique: 'Estrategia Oblicua',
     drawTarot: 'Carta de Tarot',
     placeholder: 'Elige una baraja para sacar tu carta.',
