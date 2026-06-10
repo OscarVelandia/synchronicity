@@ -1,29 +1,22 @@
-import { useMemo } from 'react'
 import { CardView } from '@components/CardView'
-import { buildObliqueStrategies } from '@data/obliqueStrategies'
-import { buildTarotDeck } from '@data/tarot'
-import { useCardHistory } from '@domain/useCardHistory'
-import { useLanguage } from '@i18n/useLanguage'
 import { languageLabels, languages } from '@i18n/language'
-import { uiText } from '@i18n/uiText'
+import {
+  cardHistoryActions,
+  cardHistorySelectors,
+  cardHistoryThunks,
+} from '@features/cardHistory/cardHistorySlice'
+import { selectCardView } from '@features/cards/cardSelectors'
+import { languageActions, languageSelectors } from '@features/language/languageSlice'
+import { useAppDispatch, useAppSelector } from '@store/hooks'
+import { isNil } from '@utils/isNil'
 
 export default function App() {
-  const { language } = useLanguage()
-  const text = uiText[language]
-
-  const obliqueDeck = useMemo(() => buildObliqueStrategies(language), [language])
-  const tarotDeck = useMemo(() => buildTarotDeck(language), [language])
-
-  const {
-    card,
-    position,
-    total,
-    canShowPrevious,
-    drawOblique,
-    drawTarot,
-    showPrevious,
-    showNext,
-  } = useCardHistory(obliqueDeck, tarotDeck)
+  const dispatch = useAppDispatch()
+  const text = useAppSelector(languageSelectors.uiText)
+  const position = useAppSelector(cardHistorySelectors.position)
+  const total = useAppSelector(cardHistorySelectors.total)
+  const canShowPrevious = useAppSelector(cardHistorySelectors.canShowPrevious)
+  const cardView = useAppSelector(selectCardView)
 
   return (
     <main className="relative mx-auto flex h-svh max-w-220 flex-col items-center gap-4 overflow-hidden px-6 pt-10 pb-6 text-center sm:gap-7 sm:pt-12 sm:pb-8">
@@ -42,12 +35,12 @@ export default function App() {
         <DeckButton
           label={text.drawOblique}
           variant="oblique"
-          onClick={drawOblique}
+          onClick={() => dispatch(cardHistoryActions.draw('oblique'))}
         />
         <DeckButton
           label={text.drawTarot}
           variant="tarot"
-          onClick={drawTarot}
+          onClick={() => dispatch(cardHistoryActions.draw('tarot'))}
         />
       </div>
 
@@ -56,7 +49,7 @@ export default function App() {
           <NavButton
             label={text.previousCard}
             glyph="‹"
-            onClick={showPrevious}
+            onClick={() => dispatch(cardHistoryActions.previous())}
             disabled={!canShowPrevious}
           />
           <span className="min-w-[3.5ch] text-xs font-semibold tracking-[1px] text-muted tabular-nums">
@@ -65,17 +58,28 @@ export default function App() {
           <NavButton
             label={text.nextCard}
             glyph="›"
-            onClick={showNext}
+            onClick={() => dispatch(cardHistoryThunks.showNext())}
+            disabled={false}
+          />
+          <span className="mx-0.5 h-5 w-px bg-gold-soft" aria-hidden="true" />
+          <NavButton
+            label={text.reset}
+            glyph="↻"
+            onClick={() => dispatch(cardHistoryActions.reset())}
             disabled={false}
           />
         </div>
       ) : null}
 
       <section className="flex min-h-0 w-full grow items-start justify-center pt-2">
-        {card === null ? (
+        {isNil(cardView) ? (
           <p className="text-[1.05rem] text-muted italic">{text.placeholder}</p>
         ) : (
-          <CardView key={`${card.kind}-${card.id}`} card={card} />
+          <CardView
+            key={`${cardView.card.kind}-${cardView.card.id}`}
+            card={cardView.card}
+            eyebrow={cardView.eyebrow}
+          />
         )}
       </section>
 
@@ -87,19 +91,21 @@ export default function App() {
 }
 
 function LanguageToggle() {
-  const { language, setLanguage } = useLanguage()
+  const dispatch = useAppDispatch()
+  const language = useAppSelector(languageSelectors.current)
+  const text = useAppSelector(languageSelectors.uiText)
 
   return (
     <div
       role="group"
-      aria-label={uiText[language].languageSwitchLabel}
+      aria-label={text.languageSwitchLabel}
       className="absolute top-3 right-5 z-10 flex gap-0.5 rounded-full border border-gold-soft bg-white/5 p-0.5 backdrop-blur-sm sm:top-6 sm:right-7 sm:gap-1 sm:p-1"
     >
       {languages.map((option) => (
         <button
           key={option}
           type="button"
-          onClick={() => setLanguage(option)}
+          onClick={() => dispatch(languageActions.setLanguage(option))}
           aria-pressed={option === language}
           className={`cursor-pointer rounded-full px-2 py-0.5 text-[0.68rem] font-semibold tracking-[0.5px] transition focus-visible:[outline:2px_solid_var(--color-gold)] focus-visible:outline-offset-2 sm:px-3 sm:py-1 sm:text-xs ${
             option === language

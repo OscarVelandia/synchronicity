@@ -1,13 +1,8 @@
 import type { TarotCard, TarotSuit } from '@domain/cards'
 import type { Language, Localized } from '@i18n/language'
 
-// Rider-Waite-Smith deck (public domain). Images live in /public/cards/tarot
-// and were sourced from Wikimedia Commons. Card identity (id, image, arcana,
-// suit) is language-independent; only the display name and meaning vary by
-// language, so the same draw can be re-rendered in either language.
-
-// Localized suit names, exported so the card eyebrow in the UI and the minor
-// card names below share one source of truth.
+// Rider-Waite-Smith deck (public domain). Ids and images stay language-stable
+// so an existing draw can be re-rendered after a language change.
 export const tarotSuitLabels: Record<TarotSuit, Localized> = {
   wands: { en: 'Wands', es: 'Bastos' },
   cups: { en: 'Cups', es: 'Copas' },
@@ -81,7 +76,7 @@ const rankDefinitions: readonly RankDefinition[] = [
   { fileIndex: '14', label: { en: 'King', es: 'Rey' }, meaningPrefix: { en: 'Authority, control, and full command of', es: 'Autoridad, control y pleno dominio de' } },
 ]
 
-// Connector word in a minor card name, e.g. "Ace of Wands" / "As de Bastos".
+// Minor-card name grammar differs by language.
 const minorNameConnector: Localized = { en: 'of', es: 'de' }
 
 export function buildTarotDeck(language: Language): readonly TarotCard[] {

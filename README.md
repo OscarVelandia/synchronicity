@@ -38,10 +38,13 @@ npm run clean    # remove node_modules + lockfile, then reinstall
 
 ```
 public/cards/tarot/   # 78 Rider–Waite–Smith images (sourced from Wikimedia Commons)
-src/domain/           # card types + draw logic
+src/domain/           # card types + small domain logic
 src/data/             # the two decks (oblique strategies, tarot), localized
-src/i18n/             # language context, UI string packs (en/es)
+src/features/         # RTK feature slices and cross-feature selectors
+src/store/            # Redux store setup + typed hooks
+src/i18n/             # language model + UI string packs (en/es)
 src/components/        # card rendering
+src/utils/             # generic project helpers
 src/App.tsx           # buttons + stage + language toggle
 ```
 

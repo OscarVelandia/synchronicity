@@ -3,7 +3,7 @@ import type { Language } from '@i18n/language'
 // All non-card UI copy, keyed by language. Card names/meanings and Oblique
 // phrases live with their decks in @data; tarot suit labels live in @data/tarot
 // so the deck and the card eyebrow can share a single source.
-type UiText = {
+export type UiText = {
   readonly title: string
   readonly subtitle: string
   readonly drawOblique: string
@@ -22,6 +22,7 @@ type UiText = {
   readonly closeImage: string
   readonly previousCard: string
   readonly nextCard: string
+  readonly reset: string
 }
 
 export const uiText: Record<Language, UiText> = {
@@ -46,6 +47,7 @@ export const uiText: Record<Language, UiText> = {
     closeImage: 'Close image',
     previousCard: 'Previous card',
     nextCard: 'Next card',
+    reset: 'Start over',
   },
   es: {
     title: 'Synchronicity',
@@ -68,5 +70,6 @@ export const uiText: Record<Language, UiText> = {
     closeImage: 'Cerrar imagen',
     previousCard: 'Carta anterior',
     nextCard: 'Carta siguiente',
+    reset: 'Empezar de nuevo',
   },
 }

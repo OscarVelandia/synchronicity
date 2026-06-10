@@ -1,7 +1,3 @@
-// Core card model shared across the app.
-// Both decks are normalized into a discriminated union so the UI can render
-// either kind from a single drawn value.
-
 export type ObliqueStrategyCard = {
   readonly kind: 'oblique'
   readonly id: string
@@ -17,7 +13,7 @@ export type TarotCard = {
   readonly id: string
   readonly name: string
   readonly arcana: TarotArcana
-  // Only present for Minor Arcana cards.
+  // Minor Arcana only.
   readonly suit?: TarotSuit
   readonly imageUrl: string
   readonly uprightMeaning: string

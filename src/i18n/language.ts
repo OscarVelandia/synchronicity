@@ -5,7 +5,6 @@ export type Language = 'en' | 'es'
 
 export const languages: readonly Language[] = ['en', 'es']
 
-// Short labels for the in-app language switch.
 export const languageLabels: Record<Language, string> = {
   en: 'EN',
   es: 'ES',

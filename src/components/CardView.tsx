@@ -1,22 +1,31 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
-import { tarotSuitLabels } from '@data/tarot'
 import type { DrawnCard, ObliqueStrategyCard, TarotCard } from '@domain/cards'
-import { useLanguage } from '@i18n/useLanguage'
-import type { Language } from '@i18n/language'
-import { uiText } from '@i18n/uiText'
+import { languageSelectors } from '@features/language/languageSlice'
+import { useAppSelector } from '@store/hooks'
 
-export function CardView({ card }: { readonly card: DrawnCard }) {
+export function CardView({
+  card,
+  eyebrow,
+}: {
+  readonly card: DrawnCard
+  readonly eyebrow: string
+}) {
   return card.kind === 'tarot' ? (
-    <TarotCardView card={card} />
+    <TarotCardView card={card} eyebrow={eyebrow} />
   ) : (
-    <ObliqueCardView card={card} />
+    <ObliqueCardView card={card} eyebrow={eyebrow} />
   )
 }
 
-function TarotCardView({ card }: { readonly card: TarotCard }) {
-  const { language } = useLanguage()
-  const text = uiText[language]
+function TarotCardView({
+  card,
+  eyebrow,
+}: {
+  readonly card: TarotCard
+  readonly eyebrow: string
+}) {
+  const text = useAppSelector(languageSelectors.uiText)
   const [isDescriptionVisible, setIsDescriptionVisible] = useState(false)
   const [isImageOpen, setIsImageOpen] = useState(false)
 
@@ -36,7 +45,7 @@ function TarotCardView({ card }: { readonly card: TarotCard }) {
       </button>
 
       <div className="flex shrink-0 flex-col gap-2">
-        <CardEyebrow>{formatTarotLabel(card, text, language)}</CardEyebrow>
+        <CardEyebrow>{eyebrow}</CardEyebrow>
         <h2 className="font-serif text-2xl font-semibold text-ink">{card.name}</h2>
         <button
           type="button"
@@ -64,25 +73,6 @@ function TarotCardView({ card }: { readonly card: TarotCard }) {
   )
 }
 
-function formatTarotLabel(
-  card: TarotCard,
-  text: (typeof uiText)[Language],
-  language: Language,
-): string {
-  switch (card.arcana) {
-    case 'major':
-      return text.majorArcana
-    case 'minor': {
-      const suitLabel =
-        card.suit === undefined ? null : tarotSuitLabels[card.suit][language]
-
-      return suitLabel === null
-        ? text.minorArcana
-        : `${text.minorArcanaWithSuitPrefix}${suitLabel}`
-    }
-  }
-}
-
 function CardEyebrow({
   className,
   children,
@@ -108,8 +98,7 @@ function CardImageModal({
   readonly name: string
   readonly onClose: () => void
 }) {
-  const { language } = useLanguage()
-  const text = uiText[language]
+  const text = useAppSelector(languageSelectors.uiText)
 
   useEffect(function lockScrollAndCloseOnEscape() {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -165,13 +154,18 @@ function CardImageModal({
   )
 }
 
-function ObliqueCardView({ card }: { readonly card: ObliqueStrategyCard }) {
-  const { language } = useLanguage()
-  const text = uiText[language]
+function ObliqueCardView({
+  card,
+  eyebrow,
+}: {
+  readonly card: ObliqueStrategyCard
+  readonly eyebrow: string
+}) {
+  const text = useAppSelector(languageSelectors.uiText)
 
   return (
     <article className="flex aspect-5/7 max-h-full w-[min(360px,88vw)] animate-card-enter flex-col items-center justify-between rounded-[14px] bg-[linear-gradient(160deg,#fbf7ec,var(--color-parchment))] px-6.5 py-7 text-parchment-ink shadow-[0_24px_60px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(0,0,0,0.06)]">
-      <CardEyebrow className="text-[#9a7a32]">{text.obliqueEyebrow}</CardEyebrow>
+      <CardEyebrow className="text-[#9a7a32]">{eyebrow}</CardEyebrow>
       <p className="flex grow items-center font-serif text-[clamp(1.3rem,4.5vw,1.7rem)] leading-[1.4] text-parchment-ink">
         {card.text}
       </p>

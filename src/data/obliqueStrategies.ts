@@ -1,11 +1,8 @@
 import type { ObliqueStrategyCard } from '@domain/cards'
 import type { Language, Localized } from '@i18n/language'
 
-// Oblique Strategies by Brian Eno & Peter Schmidt (first published 1975).
-// A representative selection of the prompts across the various editions.
-// The English text is canonical; the Spanish renderings are unofficial
-// translations. Each phrase keeps a stable position so its generated id is
-// language-independent and a draw can be re-rendered in either language.
+// Oblique Strategies by Brian Eno & Peter Schmidt. Spanish renderings are
+// unofficial; array positions are stable ids across languages.
 const strategyPhrases: readonly Localized[] = [
   { en: 'Abandon normal instruments.', es: 'Abandona los instrumentos habituales.' },
   { en: 'Accept advice.', es: 'Acepta consejos.' },
