@@ -22,9 +22,9 @@ Use this source layout for new apps unless the user asks for something different
 
 - `.nvmrc`: the Node version for the project. Run `nvm use` before `npm install`, `npm run dev`, `npm run build`, or `npm run lint`; in new projects, create this file before installing dependencies so the lockfile is generated with the intended runtime.
 - `src/main.tsx`: React root creation, Redux `<Provider>`, global CSS import, and app-wide startup sync such as `<html lang>`.
-- `src/App.tsx`: app shell and workflow composition. It wires buttons, layout, and feature-level selectors/actions, but avoids formatting derived display models inline.
-- `src/components`: reusable rendering components and local-only interactive UI such as modals or disclosure toggles.
-- `src/features/<featureName>`: Redux Toolkit feature slices, thunks, persistence helpers, and feature-specific selectors.
+- `src/App.tsx`: app shell and workflow composition only. Keep page layout, app-level copy placement, and feature slots here; move feature-owned controls and rendering into `@features`.
+- `src/components`: generic shared UI primitives only. Feature-specific UI belongs in its feature folder, even when that feels slightly heavier for a small app.
+- `src/features/<featureName>`: Redux Toolkit feature slices, thunks, persistence helpers, feature-specific selectors, and feature-owned UI components.
 - `src/features/<domainName>/<domainName>Selectors.ts`: composed selectors that join multiple slices or convert stored ids into display models.
 - `src/store`: Redux store infrastructure only (`store.ts`, `hooks.ts`, listener middleware wiring).
 - `src/domain`: product/domain types and pure domain helpers.

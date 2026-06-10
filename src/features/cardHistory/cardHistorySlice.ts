@@ -2,9 +2,9 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import { buildObliqueStrategies } from '@data/obliqueStrategies'
 import { buildTarotDeck } from '@data/tarot'
 import type { DeckKind } from '@domain/cards'
-import { shuffle } from '@domain/shuffle'
 import type { AppThunk, RootState } from '@store/store'
 import { isNil } from '@utils/isNil'
+import { shuffle } from '@utils/shuffle'
 
 // Stored by reference (deck + id) so a language switch re-renders it translated.
 type DrawnReference = { readonly kind: DeckKind; readonly id: string }
