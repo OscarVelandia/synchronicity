@@ -20,6 +20,8 @@ type UiText = {
   readonly obliqueCredit: string
   readonly enlargePrefix: string
   readonly closeImage: string
+  readonly previousCard: string
+  readonly nextCard: string
 }
 
 export const uiText: Record<Language, UiText> = {
@@ -42,6 +44,8 @@ export const uiText: Record<Language, UiText> = {
     obliqueCredit: 'Brian Eno · Peter Schmidt',
     enlargePrefix: 'Enlarge ',
     closeImage: 'Close image',
+    previousCard: 'Previous card',
+    nextCard: 'Next card',
   },
   es: {
     title: 'Synchronicity',
@@ -62,5 +66,7 @@ export const uiText: Record<Language, UiText> = {
     obliqueCredit: 'Brian Eno · Peter Schmidt',
     enlargePrefix: 'Ampliar ',
     closeImage: 'Cerrar imagen',
+    previousCard: 'Carta anterior',
+    nextCard: 'Carta siguiente',
   },
 }

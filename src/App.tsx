@@ -1,16 +1,11 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { CardView } from '@components/CardView'
 import { buildObliqueStrategies } from '@data/obliqueStrategies'
 import { buildTarotDeck } from '@data/tarot'
-import type { DeckKind } from '@domain/cards'
-import { drawCard } from '@domain/draw'
+import { useCardHistory } from '@domain/useCardHistory'
 import { useLanguage } from '@i18n/useLanguage'
 import { languageLabels, languages } from '@i18n/language'
 import { uiText } from '@i18n/uiText'
-
-// A drawn card is stored by reference (deck + id) rather than by value, so
-// switching language re-renders the same card in the new language.
-type DrawnReference = { readonly kind: DeckKind; readonly id: string }
 
 export default function App() {
   const { language } = useLanguage()
@@ -19,33 +14,16 @@ export default function App() {
   const obliqueDeck = useMemo(() => buildObliqueStrategies(language), [language])
   const tarotDeck = useMemo(() => buildTarotDeck(language), [language])
 
-  const [drawn, setDrawn] = useState<DrawnReference | null>(null)
-
-  const handleDrawOblique = () => {
-    setDrawn((previous) => {
-      const card = drawCard(obliqueDeck, previous?.id ?? null)
-
-      return { kind: card.kind, id: card.id }
-    })
-  }
-
-  const handleDrawTarot = () => {
-    setDrawn((previous) => {
-      const card = drawCard(tarotDeck, previous?.id ?? null)
-
-      return { kind: card.kind, id: card.id }
-    })
-  }
-
-  const drawnCard = useMemo(() => {
-    if (drawn === null) {
-      return null
-    }
-
-    const deck = drawn.kind === 'tarot' ? tarotDeck : obliqueDeck
-
-    return deck.find((card) => card.id === drawn.id) ?? null
-  }, [drawn, tarotDeck, obliqueDeck])
+  const {
+    card,
+    position,
+    total,
+    canShowPrevious,
+    drawOblique,
+    drawTarot,
+    showPrevious,
+    showNext,
+  } = useCardHistory(obliqueDeck, tarotDeck)
 
   return (
     <main className="relative mx-auto flex h-svh max-w-220 flex-col items-center gap-4 overflow-hidden px-6 pt-10 pb-6 text-center sm:gap-7 sm:pt-12 sm:pb-8">
@@ -64,20 +42,40 @@ export default function App() {
         <DeckButton
           label={text.drawOblique}
           variant="oblique"
-          onClick={handleDrawOblique}
+          onClick={drawOblique}
         />
         <DeckButton
           label={text.drawTarot}
           variant="tarot"
-          onClick={handleDrawTarot}
+          onClick={drawTarot}
         />
       </div>
 
+      {total > 0 ? (
+        <div className="flex items-center gap-3">
+          <NavButton
+            label={text.previousCard}
+            glyph="‹"
+            onClick={showPrevious}
+            disabled={!canShowPrevious}
+          />
+          <span className="min-w-[3.5ch] text-xs font-semibold tracking-[1px] text-muted tabular-nums">
+            {position} / {total}
+          </span>
+          <NavButton
+            label={text.nextCard}
+            glyph="›"
+            onClick={showNext}
+            disabled={false}
+          />
+        </div>
+      ) : null}
+
       <section className="flex min-h-0 w-full grow items-start justify-center pt-2">
-        {drawnCard === null ? (
+        {card === null ? (
           <p className="text-[1.05rem] text-muted italic">{text.placeholder}</p>
         ) : (
-          <CardView key={`${drawnCard.kind}-${drawnCard.id}`} card={drawnCard} />
+          <CardView key={`${card.kind}-${card.id}`} card={card} />
         )}
       </section>
 
@@ -113,6 +111,30 @@ function LanguageToggle() {
         </button>
       ))}
     </div>
+  )
+}
+
+function NavButton({
+  label,
+  glyph,
+  onClick,
+  disabled,
+}: {
+  readonly label: string
+  readonly glyph: string
+  readonly onClick: () => void
+  readonly disabled: boolean
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={label}
+      className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-gold-soft bg-white/5 text-lg leading-none text-ink transition hover:-translate-y-0.5 hover:border-gold hover:bg-white/10 active:translate-y-0 focus-visible:[outline:2px_solid_var(--color-gold)] focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:translate-y-0 disabled:hover:border-gold-soft disabled:hover:bg-white/5"
+    >
+      {glyph}
+    </button>
   )
 }
 
