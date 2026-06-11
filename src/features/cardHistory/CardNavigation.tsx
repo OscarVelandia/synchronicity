@@ -34,13 +34,6 @@ export function CardNavigation() {
         onClick={() => dispatch(cardHistoryThunks.showNext())}
         disabled={false}
       />
-      <span className="mx-0.5 h-5 w-px bg-gold-soft" aria-hidden="true" />
-      <NavButton
-        label={text.reset}
-        glyph="↻"
-        onClick={() => dispatch(cardHistoryActions.reset())}
-        disabled={false}
-      />
     </div>
   )
 }

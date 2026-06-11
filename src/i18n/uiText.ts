@@ -22,7 +22,9 @@ export type UiText = {
   readonly closeImage: string
   readonly previousCard: string
   readonly nextCard: string
-  readonly reset: string
+  readonly resetOblique: string
+  readonly resetTarot: string
+  readonly resetBothDecks: string
 }
 
 export const uiText: Record<Language, UiText> = {
@@ -47,7 +49,9 @@ export const uiText: Record<Language, UiText> = {
     closeImage: 'Close image',
     previousCard: 'Previous card',
     nextCard: 'Next card',
-    reset: 'Start over',
+    resetOblique: 'Reset Oblique',
+    resetTarot: 'Reset Tarot',
+    resetBothDecks: 'Reset both',
   },
   es: {
     title: 'Synchronicity',
@@ -70,6 +74,8 @@ export const uiText: Record<Language, UiText> = {
     closeImage: 'Cerrar imagen',
     previousCard: 'Carta anterior',
     nextCard: 'Carta siguiente',
-    reset: 'Empezar de nuevo',
+    resetOblique: 'Reiniciar Oblicuas',
+    resetTarot: 'Reiniciar Tarot',
+    resetBothDecks: 'Reiniciar ambas',
   },
 }

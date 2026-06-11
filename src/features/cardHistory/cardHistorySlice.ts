@@ -22,12 +22,8 @@ type CardHistory = {
   readonly active: DeckKind | null
 }
 
-const emptyDeckHistory: DeckHistory = { ids: [], cursor: -1, bag: [] }
-
-const initialState: CardHistory = {
-  decks: { oblique: emptyDeckHistory, tarot: emptyDeckHistory },
-  active: null,
-}
+const deckKinds = ['oblique', 'tarot'] satisfies readonly DeckKind[]
+const initialState: CardHistory = createInitialState()
 
 // Card ids never change with language, so any language yields the canonical
 // list the shuffle bag deals from.
@@ -80,12 +76,33 @@ const cardHistorySlice = createSlice({
       const deck = state.decks[state.active]
       deck.cursor = Math.min(deck.ids.length - 1, deck.cursor + 1)
     },
+    resetDeck(state, action: PayloadAction<DeckKind>) {
+      const kind = action.payload
+      const deck = state.decks[kind]
+
+      deck.ids = []
+      deck.cursor = -1
+      deck.bag = []
+
+      if (state.active !== kind) {
+        return
+      }
+
+      state.active =
+        deckKinds.find(
+          (deckKind) => deckKind !== kind && state.decks[deckKind].ids.length > 0,
+        ) ?? null
+    },
     reset() {
-      return initialState
+      return createInitialState()
     },
   },
   selectors: {
     active: (state) => state.active,
+    canResetOblique: (state) => state.decks.oblique.ids.length > 0,
+    canResetTarot: (state) => state.decks.tarot.ids.length > 0,
+    canResetBothDecks: (state) =>
+      state.decks.oblique.ids.length + state.decks.tarot.ids.length > 0,
     currentReference: (state): DrawnReference | null => {
       const { active, decks } = state
 
@@ -138,6 +155,20 @@ abstract class CardHistoryThunks {
 }
 
 // #region Helpers
+
+function createEmptyDeckHistory(): DeckHistory {
+  return { ids: [], cursor: -1, bag: [] }
+}
+
+function createInitialState(): CardHistory {
+  return {
+    decks: {
+      oblique: createEmptyDeckHistory(),
+      tarot: createEmptyDeckHistory(),
+    },
+    active: null,
+  }
+}
 
 // Stops a fresh bag from dealing the just-seen card first (no repeat across
 // cycles).
